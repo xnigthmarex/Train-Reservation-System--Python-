@@ -44,13 +44,24 @@ try:
         host='localhost',
         user='root',
         password='aryan2703',
-        database='traindata_db'
     )
     cursor = cnx.cursor()
     time.sleep(1)
     printcolor("Connection established.", "green")
 
     try:
+        try:
+            #check for database first
+            printcolor("Checking for database...", "yellow", 1)
+            cursor.execute("USE indianrailways")
+            printcolor("Database exists.", "green", 0.5)
+        except:
+            #create database
+            printcolor("Error database does not exist", "red",0.5)
+            printcolor("Creating database...", "yellow",0.5)
+            cursor.execute("CREATE DATABASE indianrailways")
+            cursor.execute("USE indianrailways")
+            printcolor("Database created successfully.", "green", 0.7)
         printcolor("Checking for tables...", "yellow", 1)
         cursor.execute("SELECT * FROM trains")
         cursor.execute("SELECT * FROM stops")
