@@ -14,8 +14,6 @@ def printcolor(text, color, sleeptime=0.15):
     COLOR_YELLOW = "\033[33m"
     COLOR_BLUE = "\033[34m"
     COLOR_MAGENTA = "\033[35m"
-    COLOR_CYAN = "\033[36m"
-    COLOR_WHITE = "\033[37m"
     COLOR_RESET = "\033[0m"
     # -- Color End--
 
@@ -31,10 +29,7 @@ def printcolor(text, color, sleeptime=0.15):
         color_code = COLOR_BLUE
     elif color == "magenta":
         color_code = COLOR_MAGENTA
-    elif color == "cyan":
-        color_code = COLOR_CYAN
-    elif color == "white":
-        color_code = COLOR_WHITE
+
 
     print(color_code + text + COLOR_RESET)
     time.sleep(sleeptime)
@@ -356,6 +351,7 @@ def user():
         printcolor("WELCOME TO USER MENU", "blue")
         printcolor("Type 1 - Login", "green")
         printcolor("Type 2 - Create Account", "green")
+        printcolor("Type 3 - PNR enquiry", "green")
         printcolor("Type 0 - BACK", "red")
         userinput = int(input(">"))
 
@@ -363,7 +359,8 @@ def user():
             login()
         elif userinput == 2:
             create_account()
-
+        elif userinput == 3:
+            pnr_enquiry()
         elif userinput == 0:
             printcolor("BACK TO MAIN MENU", "red")
             break
@@ -371,6 +368,46 @@ def user():
 # ---------------------User------------------------
 
 # util functions --------------------
+
+
+def pnr_enquiry():
+    printcolor("PNR ENQUIRY", "blue")
+    pnr_number = input("Enter PNR Number : ")
+    query = "SELECT * FROM bookings WHERE PNRNumber="+str(pnr_number)
+    cursor.execute(query)
+    booking = cursor.fetchone()
+    if booking:
+        query = "SELECT * FROM trains WHERE TrainID="+str(booking[3])
+        cursor.execute(query)
+        train = cursor.fetchone()
+        query = "SELECT * FROM stops WHERE StopID="+str(booking[5])
+        cursor.execute(query)
+        pickup = cursor.fetchone()
+        query = "SELECT * FROM stops WHERE StopID="+str(booking[6])
+        cursor.execute(query)
+        drop = cursor.fetchone()
+        query = "SELECT * FROM coaches WHERE CoachID="+str(booking[4])
+        cursor.execute(query)
+        coach = cursor.fetchone()
+        query = "SELECT * FROM seats WHERE BookingID=" + \
+            str(booking[0])
+        cursor.execute(query)
+        seat = cursor.fetchone()
+        printcolor("PNR Number : "+booking[1], "red")
+        printcolor("Train Name : "+train[1], "green")
+        printcolor(
+            "Pickup Stop : "+pickup[2]+" : "+str(pickup[3])+" - "+str(pickup[4]), "green")
+        printcolor(
+            "Drop Stop : "+drop[2]+" : "+str(drop[3])+" - "+str(drop[4]), "green")
+        printcolor("Coach Name : " +
+                   coach[2]+"", "green")
+        printcolor("Seat Number : "+seat[2], "green")
+        printcolor("Booking Date : "+str(booking[7]), "green")
+        printcolor("----------------------------", "red")
+        return
+    else:
+        printcolor("Invalid PNR Number", "red")
+        return
 
 
 def listing_trains():
@@ -429,6 +466,7 @@ def addcoach(train_name, train_id):
 
 
 # ---------------------Admin------------------------
+
 def addtrain():
 
     try:
@@ -476,17 +514,13 @@ def addtrain():
 def admin():
     printcolor("WELCOME TO ADMIN MENU", "blue")
     printcolor("Type 1 - Add Train", "green")
-    printcolor("Type 2 - Delete Train", "green")
-    printcolor("Type 3 - List Train", "green")
-    printcolor("Type 4 - Update Train", "green")
+    printcolor("Type 2 - List Train", "green")
     printcolor("Type 0 - BACK", "red")
     userinput = int(input(">"))
 
     if userinput == 1:
         addtrain()
     elif userinput == 2:
-        delete_train()
-    elif userinput == 3:
         listing_trains()
     elif userinput == 0:
         printcolor("BACK TO MAIN MENU", "red")
