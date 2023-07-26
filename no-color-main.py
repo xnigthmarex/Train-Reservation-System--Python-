@@ -2,6 +2,7 @@ import pymysql
 import time
 import random
 
+
 # Establish connection
 print("Establishing connection to database...")
 try:
@@ -251,6 +252,7 @@ def dashboard(user_id, user_name):
                 cursor.execute(query)
                 coach = cursor.fetchone()
                 print("PNR Number : "+booking[1])
+                print("Given Name",user_name)
                 print("Train Name : "+train[1])
                 print(
                     "Pickup Stop : "+pickup[2]+" : "+str(pickup[3])+" - "+str(pickup[4]))
@@ -351,6 +353,9 @@ def pnr_enquiry():
     cursor.execute(query)
     booking = cursor.fetchone()
     if booking:
+        query = "SELECT * FROM users WHERE UserID="+str(booking[2])
+        cursor.execute(query)
+        user = cursor.fetchone()
         query = "SELECT * FROM trains WHERE TrainID="+str(booking[3])
         cursor.execute(query)
         train = cursor.fetchone()
@@ -368,6 +373,7 @@ def pnr_enquiry():
         cursor.execute(query)
         seat = cursor.fetchone()
         print("PNR Number : "+booking[1])
+        print("Given Name",user[1])
         print("Train Name : "+train[1])
         print(
             "Pickup Stop : "+pickup[2]+" : "+str(pickup[3])+" - "+str(pickup[4]))
